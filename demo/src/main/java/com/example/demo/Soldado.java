@@ -5,6 +5,7 @@ public class Soldado implements Guerra {
 	private boolean vivo;
 	int escudo;
 	private int disparosRecibidos;
+	private String nombre;
 
 	public int getDisparo() {
 		return 1;
@@ -19,10 +20,17 @@ public class Soldado implements Guerra {
 	public int getEscudo() {
 		return escudo;
 	}
-	public Soldado() {//soldado con escudo
+	public Soldado(String nombre) {//soldado con escudo
 		this.vivo=true;//comienza vivo
 		this.disparosRecibidos=0;
-		this.escudo=1;
+		this.escudo=0;
+		this.setNombre(nombre);
+	}
+	public String getNombre(){
+		return this.nombre;
+	}
+	public void setNombre(String valor){
+		this.nombre=valor;
 	}
 	public Soldado(int escudo) {//Soldado sin escudo
 		this.vivo=true;

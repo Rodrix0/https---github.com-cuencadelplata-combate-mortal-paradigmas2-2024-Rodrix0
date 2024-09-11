@@ -1,6 +1,9 @@
 package com.example.demo;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Test;
 
 class GuerraTest {
@@ -8,7 +11,7 @@ class GuerraTest {
 
 	@Test
 	void soldado_disparo() {
-		Guerra soldado=new Soldado();
+		Guerra soldado=new Soldado("rodri");
 		assertEquals(1,soldado.getDisparo());//soldado disparo
 		
 	}
@@ -60,7 +63,7 @@ class GuerraTest {
 	}
 	@Test
 	void escudo_soldado() {
-		Guerra soldado=new Soldado();
+		Guerra soldado=new Soldado("rodri");
 		assertEquals(1,soldado.getEscudo());//escudo activo
 		assertTrue(soldado.estaVivo());//esta vivo
 		soldado.recibirDisparo();//recibe el disparo
@@ -97,7 +100,7 @@ class GuerraTest {
 	}
 	@Test
 	void tanque_dispara_soldado() {
-		Guerra soldado=new Soldado();
+		Guerra soldado=new Soldado("rodri");
 		Guerra tanque=new Tanque();
 		assertTrue(soldado.estaVivo());//soldado vivo
 		((Tanque)tanque).dispararA(soldado);//tanque ataca a soldado
@@ -124,7 +127,7 @@ class GuerraTest {
 	@Test
 	void soldado_dispara_buque() {
 		Guerra buque=new Buque();
-		Guerra soldado=new Soldado();
+		Guerra soldado=new Soldado("rodri");
 		assertTrue(buque.estaVivo());//buque vivo
 		((Soldado)soldado).dispararA(buque);//soldado ataca a buque
 		assertTrue(buque.estaVivo());//buque vive por el escudo
@@ -142,7 +145,7 @@ class GuerraTest {
 	@Test
 	void soldado_dispara_tanque() {
 		Guerra tanque=new Tanque();
-		Guerra soldado=new Soldado();
+		Guerra soldado=new Soldado("rodri");
 		assertTrue(tanque.estaVivo());//tanque vivo
 		((Soldado)soldado).dispararA(tanque);//soldado ataca a tanque
 		assertTrue(tanque.estaVivo());//tanque vive por el escudo
@@ -169,7 +172,7 @@ class GuerraTest {
 	}
 	@Test
 	void buque_dispara_soldado() {
-		Guerra soldado=new Soldado();
+		Guerra soldado=new Soldado("rodri");
 		Guerra buque=new Buque();
 		assertTrue(soldado.estaVivo());//soldado vivo
 		((Buque)buque).dispararA(soldado);//buque ataca a soldado
@@ -194,9 +197,101 @@ class GuerraTest {
 		assertTrue(chuck.estaVivo());
 
 
+	}
+	@Test
+	void Filtro_soldado_numeros_test() {
+
+		var soldados = new ArrayList<Soldado>();
+	
+		for (int i = 0; i < 10000; i++) {
+			soldados.add(new Soldado("Soldado " + i));
+			
+		}
+		
+		assertEquals(10000, soldados.size());
+
+		Stream<Soldado> nombreSoldados = soldados.stream()
+												.sorted((a, b) -> b.getNombre().compareTo(a.getNombre()))
+												.limit(2);
+
+		assertEquals("Soldado 9999", nombreSoldados.findFirst().get().getNombre());
+        Stream<Soldado> nombreSoldadosMenor = soldados.stream()
+												.sorted((a, b) -> a.getNombre().compareTo(b.getNombre()))
+												.limit(2);
+
+		assertEquals("Soldado 0", nombreSoldadosMenor.findFirst().get().getNombre());
+	}
+    @Test
+	void Filtro_soldado_numeros_parcial_test() {
+
+		var soldados = new ArrayList<Soldado>();
+        Soldado soldado1=new Soldado("ChuckNorris");
+	
+		for (int i = 0; i < 10000; i++) {
+			soldados.add(new Soldado("Soldado " + i));
+			
+		}
+		
+		assertEquals(10000, soldados.size());
+
+        var verEsosSoldados=soldados.stream()
+                                .filter(soldado->soldado.getNombre().endsWith("00")&&soldado.getNombre().contains("6"))
+                                .toList();
+
+        assertEquals(19, verEsosSoldados.size());
+
+        for (Soldado soldado:verEsosSoldados){
+            soldado1.dispararA(soldado);
+        }
+        for(Soldado soldado:verEsosSoldados){
+            assertFalse(soldado.estaVivo());
+		}
+        long vivos=soldados.stream()
+                            .filter(soldado->soldado.estaVivo())
+                            .count();
+        assertEquals(9981, vivos);
+	}
+
+    @Test
+	void Filtro_soldado_numeros_parcial_or_test() {
+
+		var soldados = new ArrayList<Soldado>();
+        Soldado soldado1=new Soldado("ChuckNorris");
+
+	
+		for (int i = 0; i < 10000; i++) {
+			soldados.add(new Soldado("Soldado " + i));
+			
+		}
+		
+		
+
+        var verEsosSoldados=soldados.stream()
+                                .filter(soldado->soldado.getNombre().endsWith("00")||soldado.getNombre().contains("6"))
+                                .toList();
+
+        assertEquals(3519, verEsosSoldados.size());
+
+        for (Soldado soldado:verEsosSoldados){
+			assertTrue(soldado.getNombre().endsWith("00")||soldado.getNombre().contains("6"));
+            soldado1.dispararA(soldado);
+			assertFalse(soldado.estaVivo());
+
+
+        }
+        for(Soldado soldado:verEsosSoldados){
+            assertFalse(soldado.estaVivo());
+        }
+        long vivos=soldados.stream()
+                            .filter(soldado->soldado.estaVivo())
+                            .count();
+        assertEquals(6481, vivos);
+
+
 
 
 	}
+
 	
 	
 	
